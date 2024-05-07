@@ -84,9 +84,9 @@ class TaskCreatorFrame(customtkinter.CTkFrame):
 
     def add_new_task(self):
         task_name = self.task_name_entry.get()
-        task_description = self.task_description_textbox.get()
         task_time = self.task_time_entry.get()
         task_type = self.task_type_entry.get()
+        task_description = self.task_description_textbox.get()
 
         my_tasks.add_task(task_name, task_time, task_type, task_description)
         self.my_tasks.save_task()
@@ -113,18 +113,18 @@ class Tasks:
         if not os.path.exists('saves/tasks.json'):
             self.tasks.append({
                 'name': 'My Task',
-                'description': 'This is a sample task',
                 'time': '1 hour',
-                'type': 'Personal'
+                'type': 'Personal',
+                'description': 'This is a sample task'
             })
         self.load_tasks()
 
-    def add_task(self, name, description, time, type):
+    def add_task(self, name, time, type, description):
         new_task = {
             'name': name,
-            'description': description,
             'time': time,
-            'type': type
+            'type': type,
+            'description': description,
         }
         self.tasks.append(new_task)
 
@@ -170,38 +170,58 @@ class TaskListFrame(customtkinter.CTkFrame):
 
         self.grid_columnconfigure(0, weight=1)
 
+
+
         for index, task in enumerate(current_tasks):
             task_list_frame = customtkinter.CTkFrame(self)
-            task_list_frame.grid(row=index, columnspan=3, sticky='nsew')
+            task_list_frame.grid(row=index, columnspan=3, pady=5, sticky='nsew')
+            task_list_frame.configure(fg_color="black")
             self.columnconfigure(1, weight=1)
-
-            left_frame = customtkinter.CTkFrame(task_list_frame)
-            left_frame.grid(row=1, column=0, sticky='ns')
-
-            right_frame = customtkinter.CTkFrame(task_list_frame)
-            right_frame.grid(row=1, column=2, padx=10, sticky='nsew')
+            task_list_frame.configure(width=600, height=800)
             task_list_frame.columnconfigure(1, weight=1)
 
-            task_label = customtkinter.CTkLabel(left_frame, text=f"{task['name']}")
-            task_label.grid(row=1, sticky='ns')
 
-            task_time_label = customtkinter.CTkLabel(left_frame, text=f"{task['time']}")
-            task_time_label.grid(row=2, sticky='ns')
 
-            task_type_label = customtkinter.CTkLabel(left_frame, text=f"{task['type']}")
-            task_type_label.grid(row=3, sticky='ns')
 
-            task_description_label = customtkinter.CTkLabel(left_frame, text=f"{task['description']}")
-            task_description_label.grid(row=4, pady=20)
+            left_frame = customtkinter.CTkFrame(task_list_frame)
+            left_frame.grid(row=1, columnspan=3, padx=5, sticky='ew')
+
+
+            right_frame = customtkinter.CTkFrame(task_list_frame)
+            right_frame.grid(row=1, column=2, padx=5, pady=5,  sticky='nsew')
+
+
+
+
+            else_frame = customtkinter.CTkFrame(left_frame)
+            else_frame.pack(fill='both', expand=True, pady=5, padx=5)
+            else_frame.configure(fg_color="transparent")
+
+            description_frame = customtkinter.CTkFrame(left_frame)
+            description_frame.pack(fill='both', expand=True)
+            description_frame.configure(fg_color="transparent")
+
+            task_time_label = customtkinter.CTkLabel(else_frame, text=f"{task['time']}")
+            task_time_label.grid(column=0, row=0, padx=10, sticky='ew')
+
+            task_label = customtkinter.CTkLabel(else_frame, text=f"{task['name']}")
+            task_label.grid(column=2, row=0, padx=10, sticky='ew')
+
+            task_type_label = customtkinter.CTkLabel(else_frame, text=f"{task['type']}")
+            task_type_label.grid(column=1, row=0, padx=10, sticky='ew')
+
+            task_description_label = customtkinter.CTkLabel(description_frame, text=f"{task['description']}")
+            task_description_label.pack(fill='both', expand=True)
 
             move_up_button = customtkinter.CTkButton(right_frame, text="↑",command=lambda idx=index: self.move_task_up(idx), width=10,height=10)
-            move_up_button.grid(row=0, column=0, pady=5)
-
-            move_down_button = customtkinter.CTkButton(right_frame, text="↓",command=lambda idx=index: self.move_task_down(idx), width=10,height=10)
-            move_down_button.grid(row=2, column=0, pady=5)
+            move_up_button.pack(expand=True)
 
             delete_button = customtkinter.CTkButton(right_frame, text="X",command=lambda idx=index: self.delete_task(idx),  width=10,height=10)
-            delete_button.grid(row=1, column=0, pady=5)
+            delete_button.pack(expand=True)
+
+            move_down_button = customtkinter.CTkButton(right_frame, text="↓",command=lambda idx=index: self.move_task_down(idx), width=10,height=10)
+            move_down_button.pack(expand=True)
+
 
     def move_task_up(self, index):
         if index > 0:
