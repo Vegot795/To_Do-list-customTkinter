@@ -10,11 +10,13 @@ customtkinter.set_default_color_theme("dark-blue")
 
 root.geometry("900x600")
 root.minsize(300,600)
-root.title("Tudu App")
+root.title("Tudu Tudu!")
 
 # Funkcje i klasy
 root.grid_columnconfigure(0, weight=1)
 root.grid_columnconfigure(2, weight=1)
+
+
 
 
 class TaskFrame(customtkinter.CTkFrame):
@@ -23,11 +25,13 @@ class TaskFrame(customtkinter.CTkFrame):
         self.grid(row=0, column=1, sticky='nsew')
 
 
-        self.label = customtkinter.CTkLabel(self, text="Tudu - your personal task list")
-        self.label.grid(row=0, column=1, sticky='nsew')
+        self.title_label = customtkinter.CTkLabel(self, text="Tudu Tudu!", font=("default", 40))
+        self.title2_label = customtkinter.CTkLabel(self, text="Your personal task list", font=("default", 20))
+        self.title_label.grid(row=0, column=1, sticky='nsew')
+        self.title2_label.grid(row=1, column=1, sticky='nsew')
 
         self.click_button = customtkinter.CTkButton(self, text="Add new task", width=20, command=self.open_task_creator)
-        self.click_button.grid(row=1, column=1, sticky='nsew')
+        self.click_button.grid(row=3, column=1, sticky='nsew')
 
     def open_task_creator(self):
         self.grid_forget()
@@ -78,7 +82,7 @@ class TaskCreatorFrame(customtkinter.CTkFrame):
         self.task_time_entry.grid(column=1, row=1, padx=10)
 
         self.task_day_label = customtkinter.CTkLabel(TDM_frame, text='Task Day:')
-        self.task_day_entry = customtkinter.CTkEntry(TDM_frame, width=140)
+        self.task_day_entry = customtkinter.CTkComboBox(TDM_frame, width=140)
         self.task_day_label.grid(column=2, row=0, padx=10)
         self.task_day_entry.grid(column=2, row=1, padx=10)
 
@@ -86,7 +90,6 @@ class TaskCreatorFrame(customtkinter.CTkFrame):
         self.task_month_entry = customtkinter.CTkEntry(TDM_frame, width=140)
         self.task_month_label.grid(column=3, row=0, padx=10)
         self.task_month_entry.grid(column=3, row=1, padx=10)
-
 
         #Description Values
 
@@ -99,7 +102,7 @@ class TaskCreatorFrame(customtkinter.CTkFrame):
         description_frame.configure(fg_color="blue")
 
         self.task_description_label = customtkinter.CTkLabel(description_frame, text="Task Description:")
-        self.task_description_textbox = customtkinter.CTkEntry(description_frame, height=300)
+        self.task_description_textbox = customtkinter.CTkTextbox(description_frame, height=300, font=("default", 15))
         self.task_description_label.grid(row=0, column=1, sticky='w')
         self.task_description_textbox.grid(sticky='nsew', columnspan=3, rowspan=4)
 
@@ -119,7 +122,7 @@ class TaskCreatorFrame(customtkinter.CTkFrame):
         task_day = self.task_day_entry.get()
         task_month = self.task_month_entry.get()
         task_type = self.task_type_entry.get()
-        task_description = self.task_description_textbox.get()
+        task_description = self.task_description_textbox.get("1.0", "end")
 
         my_tasks.add_task(task_name, task_time, task_day, task_month, task_type, task_description)
         self.my_tasks.save_task()
@@ -222,35 +225,41 @@ class TaskListFrame(customtkinter.CTkFrame):
 
             left_frame = customtkinter.CTkFrame(task_list_frame)
             left_frame.grid(row=1, columnspan=3, padx=5, sticky='ew')
-
+            left_frame.configure(fg_color="yellow")
 
             right_frame = customtkinter.CTkFrame(task_list_frame)
             right_frame.grid(row=1, column=2, padx=5, pady=5,  sticky='nsew')
+            right_frame.configure(fg_color="red")
 
             else_frame = customtkinter.CTkFrame(left_frame)
             else_frame.pack(fill='both', expand=True, pady=5, padx=5)
-            else_frame.configure(fg_color="transparent")
+            else_frame.configure(fg_color="green")
+            else_frame.columnconfigure(1, weight=1)
 
-            description_frame = customtkinter.CTkFrame(left_frame)
-            description_frame.pack(fill='both', expand=True)
-            description_frame.configure(fg_color="transparent")
-
-            task_time_label = customtkinter.CTkLabel(else_frame, text=f"{task['time']}")
-            task_time_label.grid(column=0, row=1, padx=10, sticky='ew')
-
-            task_day_label = customtkinter.CTkLabel(else_frame, text=f"{task['day']}")
-            task_day_label.grid(column=0, row=0, padx=10, sticky='ew')
-
-            task_month_label = customtkinter.CTkLabel(else_frame, text=f"{task['month']}")
-            task_month_label.grid(column=0, row=2, padx=10, sticky='ew')
-
-            task_label = customtkinter.CTkLabel(else_frame, text=f"{task['name']}")
-            task_label.grid(column=2, row=0, padx=10, sticky='ew')
+            task_label = customtkinter.CTkLabel(else_frame, text=f"{task['name']}", font=("default", 20))
+            task_label.grid(column=0, row=0, padx=10, sticky='ew')
 
             task_type_label = customtkinter.CTkLabel(else_frame, text=f"{task['type']}")
-            task_type_label.grid(column=1, row=0, padx=10, sticky='ew')
+            task_type_label.grid(column=2, row=0, padx=10, sticky='ew')
 
-            task_description_label = customtkinter.CTkLabel(description_frame, text=f"{task['description']}")
+            TDM_frame = customtkinter.CTkFrame(left_frame)
+            TDM_frame.pack(fill='both', expand=True, padx=5, pady=5)
+            TDM_frame.configure(fg_color="darkblue")
+
+            task_time_label = customtkinter.CTkLabel(TDM_frame, text=f"{task['time']}")
+            task_time_label.grid(column=0, row=0, padx=10, sticky='ew')
+
+            task_day_label = customtkinter.CTkLabel(TDM_frame, text=f"{task['day']}")
+            task_day_label.grid(column=1, row=0, padx=10, sticky='ew')
+
+            task_month_label = customtkinter.CTkLabel(TDM_frame, text=f"{task['month']}")
+            task_month_label.grid(column=2, row=0, padx=10, sticky='ew')
+
+            description_frame = customtkinter.CTkFrame(left_frame)
+            description_frame.pack(fill='both', expand=True, padx=5, pady=5)
+            description_frame.configure(fg_color="white")
+
+            task_description_label = customtkinter.CTkLabel(description_frame, text=f"{task['description']}", font=("default",15))
             task_description_label.pack(fill='both', expand=True)
 
             move_up_button = customtkinter.CTkButton(right_frame, text="↑",command=lambda idx=index: self.move_task_up(idx), width=10,height=10)
