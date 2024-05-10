@@ -9,7 +9,7 @@ customtkinter.set_appearance_mode("dark")
 customtkinter.set_default_color_theme("dark-blue")
 
 root.geometry("900x600")
-root.minsize(300,600)
+root.minsize(300, 600)
 root.title("Tudu Tudu!")
 
 # Funkcje i klasy
@@ -18,12 +18,10 @@ root.grid_columnconfigure(2, weight=1)
 
 
 
-
 class TaskFrame(customtkinter.CTkFrame):
     def __init__(self, root):
         super().__init__(root)
         self.grid(row=0, column=1, sticky='nsew')
-
 
         self.title_label = customtkinter.CTkLabel(self, text="Tudu Tudu!", font=("default", 40))
         self.title2_label = customtkinter.CTkLabel(self, text="Your personal task list", font=("default", 20))
@@ -50,7 +48,7 @@ class TaskCreatorFrame(customtkinter.CTkFrame):
         self.grid_rowconfigure(4, weight=1)
 
         else_frame = customtkinter.CTkFrame(self)
-        else_frame.grid(row=0,columnspan=3, sticky='nsew')
+        else_frame.grid(row=0, columnspan=3, sticky='nsew')
         else_frame.columnconfigure(0, weight=1)
         else_frame.columnconfigure(2, weight=1)
         else_frame.configure(fg_color='green')
@@ -82,7 +80,9 @@ class TaskCreatorFrame(customtkinter.CTkFrame):
         self.task_time_entry.grid(column=1, row=1, padx=10)
 
         self.task_day_label = customtkinter.CTkLabel(TDM_frame, text='Task Day:')
-        self.task_day_entry = customtkinter.CTkComboBox(TDM_frame, width=140)
+        self.task_day_entry = customtkinter.CTkComboBox(TDM_frame, width=140, values=[
+
+        ])
         self.task_day_label.grid(column=2, row=0, padx=10)
         self.task_day_entry.grid(column=2, row=1, padx=10)
 
@@ -110,11 +110,17 @@ class TaskCreatorFrame(customtkinter.CTkFrame):
         button_frame.grid(column=1, sticky='nsew', row=5, pady=10)
         button_frame.configure(fg_color='white')
 
-        self.save_button = customtkinter.CTkButton(button_frame, text="Save Task", width=20, command=self.save_current_task)
-        self.save_button.grid()
+        self.save_button = customtkinter.CTkButton(button_frame, text="Save Task", width=20,
+                                                   command=self.save_current_task)
+        self.save_button.pack()
 
-        self.cancel_button = customtkinter.CTkButton(button_frame, text="Cancel", width=20, command=self.open_main_window)
-        self.cancel_button.grid()
+        self.cancel_button = customtkinter.CTkButton(button_frame, text="Cancel", width=20,
+                                                     command=self.open_main_window)
+        self.cancel_button.pack()
+
+
+
+
 
     def add_new_task(self):
         task_name = self.task_name_entry.get()
@@ -140,6 +146,9 @@ class TaskCreatorFrame(customtkinter.CTkFrame):
         self.my_tasks.save_task()
         self.my_tasks.load_tasks()
         task_list_frame.update_task_list()
+
+        self.grid_forget()
+        self.open_main_window()
 
 
 class Tasks:
@@ -191,7 +200,7 @@ class Tasks:
             self.tasks = []  # Create an empty list if the file doesn't exist
 
 
-class TaskListFrame(customtkinter.CTkFrame):
+class TaskListFrame(customtkinter.CTkScrollableFrame):
 
     def __init__(self, root, tasks_instance):
         super().__init__(root)
@@ -199,8 +208,7 @@ class TaskListFrame(customtkinter.CTkFrame):
         root.grid_rowconfigure(1, weight=1)
         root.grid_columnconfigure(0, weight=1)
         self.my_tasks = tasks_instance
-        self.configure('lightblue')
-
+        self.configure(fg_color='lightblue')
 
     def update_task_list(self):
         for widget in self.winfo_children():
@@ -210,8 +218,6 @@ class TaskListFrame(customtkinter.CTkFrame):
 
         self.grid_columnconfigure(0, weight=1)
 
-
-
         for index, task in enumerate(current_tasks):
             task_list_frame = customtkinter.CTkFrame(self)
             task_list_frame.grid(row=index, columnspan=3, pady=5, sticky='nsew')
@@ -220,15 +226,12 @@ class TaskListFrame(customtkinter.CTkFrame):
             task_list_frame.configure(width=600, height=800)
             task_list_frame.columnconfigure(1, weight=1)
 
-
-
-
             left_frame = customtkinter.CTkFrame(task_list_frame)
             left_frame.grid(row=1, columnspan=3, padx=5, sticky='ew')
             left_frame.configure(fg_color="yellow")
 
             right_frame = customtkinter.CTkFrame(task_list_frame)
-            right_frame.grid(row=1, column=2, padx=5, pady=5,  sticky='nsew')
+            right_frame.grid(row=1, column=2, padx=5, pady=5, sticky='nsew')
             right_frame.configure(fg_color="red")
 
             else_frame = customtkinter.CTkFrame(left_frame)
@@ -257,32 +260,43 @@ class TaskListFrame(customtkinter.CTkFrame):
 
             description_frame = customtkinter.CTkFrame(left_frame)
             description_frame.pack(fill='both', expand=True, padx=5, pady=5)
-            description_frame.configure(fg_color="white")
+            description_frame.configure(fg_color="purple")
 
-            task_description_label = customtkinter.CTkLabel(description_frame, text=f"{task['description']}", font=("default",15))
+            task_description_label = customtkinter.CTkLabel(description_frame, text=f"{task['description']}",
+                                                            font=("default", 15))
             task_description_label.pack(fill='both', expand=True)
 
-            move_up_button = customtkinter.CTkButton(right_frame, text="↑",command=lambda idx=index: self.move_task_up(idx), width=10,height=10)
+            move_up_button = customtkinter.CTkButton(right_frame, text="↑",
+                                                     command=lambda idx=index: self.move_task_up(idx), width=10,
+                                                     height=10)
             move_up_button.pack(expand=True)
 
-            delete_button = customtkinter.CTkButton(right_frame, text="X",command=lambda idx=index: self.delete_task(idx),  width=10,height=10)
+            delete_button = customtkinter.CTkButton(right_frame, text="X",
+                                                    command=lambda idx=index: self.delete_task(idx), width=10,
+                                                    height=10)
             delete_button.pack(expand=True)
 
-            move_down_button = customtkinter.CTkButton(right_frame, text="↓",command=lambda idx=index: self.move_task_down(idx), width=10,height=10)
-            move_down_button.pack(expand=True)
+            edit_button = customtkinter.CTkButton(right_frame, text="edit",
+                                                  command=lambda idx=index: self.open_task_edit(idx), width=10,
+                                                  height=10)
+            edit_button.pack(expand=True)
 
+            move_down_button = customtkinter.CTkButton(right_frame, text="↓",
+                                                       command=lambda idx=index: self.move_task_down(idx), width=10,
+                                                       height=10)
+            move_down_button.pack(expand=True)
 
     def move_task_up(self, index):
         if index > 0:
             self.my_tasks.tasks[index], self.my_tasks.tasks[index - 1] = self.my_tasks.tasks[index - 1], \
-            self.my_tasks.tasks[index]
+                self.my_tasks.tasks[index]
             self.my_tasks.save_task()
             self.update_task_list()
 
     def move_task_down(self, index):
         if index < len(self.my_tasks.tasks) - 1:
             self.my_tasks.tasks[index], self.my_tasks.tasks[index + 1] = self.my_tasks.tasks[index + 1], \
-            self.my_tasks.tasks[index]
+                self.my_tasks.tasks[index]
             self.my_tasks.save_task()
             self.update_task_list()
 
@@ -290,6 +304,45 @@ class TaskListFrame(customtkinter.CTkFrame):
         del self.my_tasks.tasks[index]
         self.my_tasks.save_task()
         self.update_task_list()
+
+    def open_task_edit(self, index):
+        self.grid_forget()
+        task_frame.grid_forget()
+
+        task_to_edit = self.my_tasks.tasks[index]
+
+        TaskFrame.open_task_creator(self)
+
+        task_creator_frame.task_name_entry.delete(0, 'end')
+        task_creator_frame.task_name_entry.insert(0, task_to_edit['name'])
+        task_creator_frame.task_type_entry.delete(0, 'end')
+        task_creator_frame.task_type_entry.insert(0, task_to_edit['type'])
+        task_creator_frame.task_time_entry.delete(0, 'end')
+        task_creator_frame.task_time_entry.insert(0, task_to_edit['time'])
+        task_creator_frame.task_day_entry.set(task_to_edit['day'])  # Assuming task_day_entry is a dropdown
+        task_creator_frame.task_month_entry.delete(0, 'end')
+        task_creator_frame.task_month_entry.insert(0, task_to_edit['month'])
+        task_creator_frame.task_description_textbox.delete(1.0, 'end')
+        task_creator_frame.task_description_textbox.insert(1.0, task_to_edit['description'])
+
+        task_creator_frame.save_button.configure(command=lambda: self.save_edited_task(index))
+        task_creator_frame.save_button.pack()
+
+    def save_edited_task(self, index):
+        self.grid_forget()
+
+        self.my_tasks.tasks[index]['name'] = task_creator_frame.task_name_entry.get()
+        self.my_tasks.tasks[index]['type'] = task_creator_frame.task_type_entry.get()
+        self.my_tasks.tasks[index]['time'] = task_creator_frame.task_time_entry.get()
+        self.my_tasks.tasks[index]['day'] = task_creator_frame.task_month_entry.get()
+        self.my_tasks.tasks[index]['month'] = task_creator_frame.task_month_entry.get()
+        self.my_tasks.tasks[index]['description'] = task_creator_frame.task_description_textbox.get(1.0, "end")
+
+        self.my_tasks.save_task()
+        self.update_task_list()
+
+        task_creator_frame.open_main_window()
+
 
 # Okno główne
 
@@ -301,6 +354,5 @@ task_list_frame = TaskListFrame(root, my_tasks)
 task_list_frame.grid(row=1, column=0, sticky='nsew', columnspan=3)
 my_tasks.load_tasks()
 task_list_frame.update_task_list()
-
 
 root.mainloop()
