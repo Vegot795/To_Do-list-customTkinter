@@ -90,7 +90,21 @@ class TaskFrame(customtkinter.CTkFrame):
 
 class TaskCreatorFrame(customtkinter.CTkFrame):
 
+    def populate_day_combobox(self, combobox):
+        current_date = datetime.date.day()  # Call the method directly
+        current_month = current_date.month
+        current_year = current_date.year
 
+        days_in_month = calendar.monthcalendar(current_year, current_month)[0]
+        days = [str(day) for day in days_in_month if day != 0]
+        combobox.configure(values=days)
+
+    def populate_month_combobox(self, combobox):
+        months = [
+            "January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+            "November", "December"
+        ]
+        combobox.configure(values=months)
     def __init__(self, root, task_instance):
         super().__init__(root)
         self.my_tasks = task_instance
@@ -136,13 +150,13 @@ class TaskCreatorFrame(customtkinter.CTkFrame):
         self.task_day_entry = customtkinter.CTkComboBox(TDM_frame, width=140)
         self.task_day_label.grid(column=2, row=0, padx=10)
         self.task_day_entry.grid(column=2, row=1, padx=10)
-
+        self.populate_day_combobox(self.task_day_entry)
 
         self.task_month_label = customtkinter.CTkLabel(TDM_frame, text='Task Month:')
         self.task_month_entry = customtkinter.CTkEntry(TDM_frame, width=140)
         self.task_month_label.grid(column=3, row=0, padx=10)
         self.task_month_entry.grid(column=3, row=1, padx=10)
-
+        self.populate_month_combobox(self.task_month_entry)
 
 
 
