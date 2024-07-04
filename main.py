@@ -1,7 +1,8 @@
 import json
 import os
 import customtkinter
-import pickle
+import calendar
+from datetime import datetime, date
 
 root = customtkinter.CTk()
 
@@ -18,7 +19,53 @@ root.grid_columnconfigure(2, weight=1)
 
 
 
+class Tasks():
 
+    def __init__(self):
+        self.tasks = []
+        if not os.path.exists('saves/tasks.json'):
+            self.tasks.append({
+                'name': 'My Task',
+                'time': '1 hour',
+                'day': 'monday',
+                'month': 'may',
+                'type': 'Personal',
+                'description': 'This is a sample task'
+            })
+        self.load_tasks()
+
+    def add_task(self, name, time, day, month, type, description):
+        new_task = {
+            'name': name,
+            'time': time,
+            'day': day,
+            'month': month,
+            'type': type,
+            'description': description,
+        }
+        self.tasks.append(new_task)
+
+    def get_tasks(self):
+        return self.tasks
+
+    def save_task(self):
+        try:
+            with open('saves/tasks.json', 'w') as file:
+                json.dump(self.tasks, file)
+            print("Tasks saved successfully.")
+        except IOError as e:
+            print(f"An error occurred while saving tasks: {e}")
+
+    def load_tasks(self):
+        if os.path.exists('saves/tasks.json'):
+            with open('saves/tasks.json', 'r') as file:
+                try:
+                    self.tasks = json.load(file)
+                except json.JSONDecodeError as e:  # Correct exception for JSON files
+                    print(f"An error occurred while loading tasks: {e}")
+                    self.tasks = []  # Fallback to an empty list if loading fails
+        else:
+            self.tasks = []  # Create an empty list if the file doesn't exist
 class TaskFrame(customtkinter.CTkFrame):
     def __init__(self, root):
         super().__init__(root)
@@ -42,6 +89,22 @@ class TaskFrame(customtkinter.CTkFrame):
 
 
 class TaskCreatorFrame(customtkinter.CTkFrame):
+
+    def populate_day_combobox(self, combobox):
+        current_date = datetime.date.day()  # Call the method directly
+        current_month = current_date.month
+        current_year = current_date.year
+
+        days_in_month = calendar.monthcalendar(current_year, current_month)[0]
+        days = [str(day) for day in days_in_month if day != 0]
+        combobox.configure(values=days)
+
+    def populate_month_combobox(self, combobox):
+        months = [
+            "January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+            "November", "December"
+        ]
+        combobox.configure(values=months)
     def __init__(self, root, task_instance):
         super().__init__(root)
         self.my_tasks = task_instance
@@ -61,7 +124,9 @@ class TaskCreatorFrame(customtkinter.CTkFrame):
         self.task_name_entry.grid(column=1, sticky='nsew')
 
         self.task_type_label = customtkinter.CTkLabel(else_frame, text="Task Type:")
-        self.task_type_entry = customtkinter.CTkEntry(else_frame)
+        self.task_type_entry = customtkinter.CTkComboBox(else_frame, values=[
+            "Critical", "Important", "Normal", "Low Priority", "Because so"
+        ])
         self.task_type_label.grid(column=1, sticky='nsew')
         self.task_type_entry.grid(column=1, sticky='nsew')
 
@@ -85,11 +150,15 @@ class TaskCreatorFrame(customtkinter.CTkFrame):
         self.task_day_entry = customtkinter.CTkComboBox(TDM_frame, width=140)
         self.task_day_label.grid(column=2, row=0, padx=10)
         self.task_day_entry.grid(column=2, row=1, padx=10)
+        self.populate_day_combobox(self.task_day_entry)
 
         self.task_month_label = customtkinter.CTkLabel(TDM_frame, text='Task Month:')
         self.task_month_entry = customtkinter.CTkEntry(TDM_frame, width=140)
         self.task_month_label.grid(column=3, row=0, padx=10)
         self.task_month_entry.grid(column=3, row=1, padx=10)
+        self.populate_month_combobox(self.task_month_entry)
+
+
 
         #Description Values
 
@@ -142,53 +211,7 @@ class TaskCreatorFrame(customtkinter.CTkFrame):
         task_list_frame.update_task_list()
 
 
-class Tasks:
 
-    def __init__(self):
-        self.tasks = []
-        if not os.path.exists('saves/tasks.json'):
-            self.tasks.append({
-                'name': 'My Task',
-                'time': '1 hour',
-                'day': 'monday',
-                'month': 'may',
-                'type': 'Personal',
-                'description': 'This is a sample task'
-            })
-        self.load_tasks()
-
-    def add_task(self, name, time, day, month, type, description):
-        new_task = {
-            'name': name,
-            'time': time,
-            'day': day,
-            'month': month,
-            'type': type,
-            'description': description,
-        }
-        self.tasks.append(new_task)
-
-    def get_tasks(self):
-        return self.tasks
-
-    def save_task(self):
-        try:
-            with open('saves/tasks.json', 'w') as file:
-                json.dump(self.tasks, file)
-            print("Tasks saved successfully.")
-        except IOError as e:
-            print(f"An error occurred while saving tasks: {e}")
-
-    def load_tasks(self):
-        if os.path.exists('saves/tasks.json'):
-            with open('saves/tasks.json', 'r') as file:
-                try:
-                    self.tasks = json.load(file)
-                except json.JSONDecodeError as e:  # Correct exception for JSON files
-                    print(f"An error occurred while loading tasks: {e}")
-                    self.tasks = []  # Fallback to an empty list if loading fails
-        else:
-            self.tasks = []  # Create an empty list if the file doesn't exist
 
 
 class TaskListFrame(customtkinter.CTkFrame):
