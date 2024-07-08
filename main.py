@@ -344,9 +344,20 @@ class TaskListFrame(customtkinter.CTkScrollableFrame):
         task_creator_frame.open_main_window()
 
 
+class OptionsFrame(customtkinter.CTkFrame):
+
+    def __init__(self, root):
+        super.__init__(root)
+
+        self.ThemeChoice = customtkinter.CTkComboBox()
+        self.configure(fg_color='green')
+
+
+
+
 # Okno główne
 
-
+options_frame = OptionsFrame(root)
 task_frame = TaskFrame(root)
 my_tasks = Tasks()
 task_creator_frame = TaskCreatorFrame(root, my_tasks)
